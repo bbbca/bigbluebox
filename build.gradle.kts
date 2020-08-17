@@ -39,6 +39,9 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.assertj:assertj-core:3.16.1")
+    implementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0")
+    implementation("org.mockito:mockito-core:3.5.0")
 }
 
 tasks.withType<Test> {

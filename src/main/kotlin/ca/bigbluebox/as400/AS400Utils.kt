@@ -16,16 +16,19 @@
  */
 
 
-package ca.bigbluebox
+package ca.bigbluebox.as400
 
-import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.stereotype.Component
 
-@SpringBootTest
-class BigblueboxApplicationTests {
+interface AS400Utils {
 
-	@Test
-	fun contextLoads() {
-	}
+    fun isAS400(): Boolean
+
+}
+
+@Component
+class AS400UtilsImpl():AS400Utils {
+
+    override fun isAS400() = System.getProperty("os.name") == "OS/400"
 
 }
