@@ -24,17 +24,18 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
+import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner
 import java.lang.IllegalStateException
 import javax.sql.DataSource
 
 class AS400AutoConfigurationTests {
-    private val webApplicationContextRunner: WebApplicationContextRunner = WebApplicationContextRunner()
+    private val applicationContextRunner: ApplicationContextRunner = ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(AS400AutoConfiguration::class.java, AS400UtilsMocks::class.java))
 
     @Test
     fun localhostWhenNotOs400Fails() {
-        webApplicationContextRunner
+        applicationContextRunner
                 .withPropertyValues("spring.profiles.active=notOs400",
                         "as400.address=localhost",
                         "as400.user=user",
@@ -50,7 +51,7 @@ class AS400AutoConfigurationTests {
 
     @Test
     fun currentUserWhenNotOs400Fails() {
-        webApplicationContextRunner
+        applicationContextRunner
                 .withPropertyValues("spring.profiles.active=notOs400",
                         "as400.address=as400",
                         "as400.user=*CURRENT",
@@ -66,7 +67,7 @@ class AS400AutoConfigurationTests {
 
     @Test
     fun currentPasswordWhenNotOs400Fails() {
-        webApplicationContextRunner
+        applicationContextRunner
                 .withPropertyValues("spring.profiles.active=notOs400",
                         "as400.address=as400",
                         "as400.user=user",
@@ -82,7 +83,7 @@ class AS400AutoConfigurationTests {
 
     @Test
     fun localhostAndCurrentWhenOs400Succeeds() {
-        webApplicationContextRunner
+        applicationContextRunner
                 .withPropertyValues("spring.profiles.active=os400",
                         "as400.address=localhost",
                         "as400.user=*CURRENT",
@@ -101,7 +102,7 @@ class AS400AutoConfigurationTests {
 
     @Test
     fun notLocalhostAndNotCurrentWhenNotOs400Succeeds() {
-        webApplicationContextRunner
+        applicationContextRunner
                 .withPropertyValues("spring.profiles.active=notOs400",
                         "as400.address=as400",
                         "as400.user=user",

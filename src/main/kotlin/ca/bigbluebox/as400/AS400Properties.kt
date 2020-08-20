@@ -23,12 +23,18 @@ import org.springframework.util.Assert
 
 @ConfigurationProperties(prefix = "as400")
 class AS400Properties() {
+    /**
+     * IBM i IP address or hostname.
+     */
     var address = "localhost"
         set(value) {
             Assert.isTrue(value.isNotEmpty(), "Address must not be empty")
             field = value
         }
 
+    /**
+     * IBM i user
+     */
     var user = "*CURRENT"
         set(value) {
             Assert.isTrue(value.isNotEmpty(), "User must not be empty")
@@ -36,6 +42,9 @@ class AS400Properties() {
             field = value
         }
 
+    /**
+     * IBM i password
+     */
     var password = "*CURRENT"
         set(value) {
             Assert.isTrue(value.isNotEmpty(), "Password must not be empty")

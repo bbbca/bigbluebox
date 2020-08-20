@@ -28,10 +28,14 @@ import javax.sql.DataSource
 @Configuration
 @ConditionalOnClass(AS400::class)
 @EnableConfigurationProperties(AS400Properties::class)
-class AS400AutoConfiguration(val as400Utils: AS400Utils) {
+class AS400AutoConfiguration() {
 
     @Bean
-    fun as400(as400Properties: AS400Properties): AS400 {
+    fun as400Utils(): AS400Utils = AS400UtilsImpl()
+
+    @Bean
+    fun as400(as400Properties: AS400Properties,
+              as400Utils: AS400Utils): AS400 {
         if (!as400Utils.isAS400()) {
             if (as400Properties.address == "localhost") {
                 throw IllegalStateException("as400.address can only be localhost when running on IBM i")
