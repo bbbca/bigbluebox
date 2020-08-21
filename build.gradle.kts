@@ -1,11 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
+import com.jfrog.bintray.gradle.BintrayExtension
 
 plugins {
     id("org.springframework.boot") version "2.3.3.RELEASE" apply false
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
     id("maven-publish")
     id("java-library")
+    id("com.jfrog.bintray") version "1.8.5"
+    id("org.jetbrains.dokka") version "0.10.1"
     kotlin("jvm") version "1.3.72"
     kotlin("kapt") version "1.3.72"
     kotlin("plugin.spring") version "1.3.72"
@@ -19,7 +22,7 @@ the<DependencyManagementExtension>().apply {
 }
 
 group = "ca.bigbluebox"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 configurations {
@@ -30,6 +33,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -55,10 +59,49 @@ tasks.withType<KotlinCompile> {
         jvmTarget = "1.8"
     }
 }
+
+tasks.dokka {
+    outputFormat = "html"
+    outputDirectory = "$buildDir/javadoc"
+}
+
+val dokkaJar by tasks.creating(Jar::class) {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Assembles Kotlin docs with Dokka"
+    archiveClassifier.set("javadoc")
+    from(tasks.dokka)
+}
+
+val sourcesJar by tasks.creating(Jar::class) {
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = "Assembles sources JAR"
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
+            artifact(dokkaJar)
+            artifact(sourcesJar)
         }
     }
+}
+
+fun findProperty(s: String) = project.findProperty(s) as String?
+bintray {
+    user = findProperty("bintrayUser")
+    key = findProperty("bintrayApiKey")
+    publish = true
+    setPublications("maven")
+    pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
+        repo = "bigbluebox"
+        name = "bigbluebox"
+        userOrg = "bigbluebox"
+        setLicenses("Apache-2.0")
+        version(delegateClosureOf<BintrayExtension.VersionConfig> {
+            name = project.version.toString()
+        })
+    })
 }
